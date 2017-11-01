@@ -1,0 +1,91 @@
+version: "3.3"
+
+services:
+  ########################################################################
+  db:
+    image: mysql:${MYSQL_VERSION:-5.7.20}
+    environment:
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - type: volume
+        source: ./services_settings/mysql_configs/custom_configs.cnf
+        target: /etc/mysql/conf.d/custom_configs.cnf
+        read_only: true
+  ########################################################################
+  php:
+    image: xplouder/docker-playground:1.0.0
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile_php_fpm_phalcon_alpine
+      args:
+        - PHP_VERSION=${PHP_VERSION:-7.1.10}
+        - PHALCON_VERSION=${PHALCON_VERSION:-3.2.4}
+        # Optional (1) ---------------------
+        - USER_ID=${USER_ID:-0}
+        - GROUP_USER_ID=${GROUP_USER_ID:-0}
+        - USER_NAME=${USER_NAME:-root}
+        # ----------------------------------
+    # Optional (1) -------------------------
+    user: ${USER_ID:-0}:${GROUP_USER_ID:-0}
+    # --------------------------------------
+    volumes:
+      # [Project]
+      - type: volume
+        source: ./project/code
+        target: /code
+      - type: volume
+        source: ./project/resources
+        target: /resources
+        # [PHP-FPM] Log Configs
+      - type: volume
+        source: ./services_settings/php_configs/php-fpm_log_config.conf
+        target: /usr/local/etc/php-fpm.d/zz-log.conf
+        read_only: true
+        # [PHP] Extra configs
+      - type: volume
+        source: ./services_settings/php_configs/zz_extra_configs.ini
+        target: /usr/local/etc/php/conf.d/zz_extra_configs.ini
+        read_only: true
+      # [SSH]
+      - type: volume
+        source: ${SSH_FOLDER_PATH:-~/.ssh}
+        target: /home/${USER_NAME:-root}/.ssh
+        read_only: true
+      # Optional (1) -----------------------------------------------------
+      #- type: volume
+      #  source: /etc/group
+      #  target: /etc/group
+      #  read_only: true
+      #- type: volume
+      #  source: /etc/passwd
+      #  target: /etc/passwd
+      #  read_only: true
+      # ------------------------------------------------------------------
+    depends_on:
+      - db
+  ########################################################################
+  web:
+    image: nginx:${NGINX_VERSION:-1.13.6}-alpine
+    ports:
+      - "8080:80"
+      - "8081:81"
+    volumes:
+      - type: volume
+        source: ./project/code
+        target: /code
+      - type: volume
+        source: ./project/resources
+        target: /resources
+      - type: volume
+        source: ./services_settings/nginx_conf.d
+        target: /etc/nginx/conf.d
+    links:
+      - php
+    depends_on:
+      - php
+      - db
+
+# (1) Workaround for linux maping user id and user group id mapping,
+# comment this block if it not your case

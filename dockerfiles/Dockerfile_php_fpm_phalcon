@@ -1,0 +1,80 @@
+ARG PHP_VERSION=7.0.24
+FROM php:${PHP_VERSION}-fpm
+
+########################################################################################################################
+# INIT #################################################################################################################
+
+LABEL maintainer="Xplouder <jfasxx@hotmail.com>"
+
+#ADD ./debian-stretch/source.list /etc/apt/sources.list.d/source.list
+#ADD ./debian-stretch/source.preference /etc/apt/preferences.d/source
+
+RUN apt-get update && apt-get upgrade
+
+########################################################################################################################
+# PHP LIBS #############################################################################################################
+
+# Dependencies for php libs
+RUN apt-get install -y libmagickwand-dev --no-install-recommends \
+        libfreetype6-dev \
+        libjpeg62-turbo-dev \
+        libmcrypt-dev \
+        libpng12-dev \
+        libicu-dev
+
+RUN	pecl install imagick && docker-php-ext-enable imagick
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN docker-php-ext-install mbstring iconv mcrypt pdo_mysql zip mysqli exif intl bcmath opcache pdo
+# TODO find a way to install: php-cli, php-gd, php-yaml
+
+
+########################################################################################################################
+# CLI TOOLS ############################################################################################################
+RUN apt-get install -y vim nano git tree wget
+
+########################################################################################################################
+# EXTRA LIBS ###########################################################################################################
+RUN apt-get install -y \
+	ImageMagick \
+	GraphicsMagick \
+	net-tools \
+	mysql-client \
+	npm \
+	&& npm cache clean -f \
+	&& npm install -g n \
+	&& n stable && \
+	&& npm install npm@latest -g \
+	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+########################################################################################################################
+# PHALCON ##############################################################################################################
+ARG PHALCON_VERSION=3.2.4
+
+# ref: https://github.com/braska/docker-php-fpm-phalcon/blob/master/Dockerfile
+# Compile Phalcon
+RUN set -xe \
+    && curl -LO https://github.com/phalcon/cphalcon/archive/v${PHALCON_VERSION}.tar.gz \
+    && tar xzf v${PHALCON_VERSION}.tar.gz && cd cphalcon-${PHALCON_VERSION}/build \
+    && ./install \
+    && docker-php-ext-enable phalcon \
+    && cd ../.. && rm -rf v${PHALCON_VERSION}.tar.gz cphalcon-${PHALCON_VERSION} \
+    # Install Phalcon Devtools, see https://github.com/phalcon/phalcon-devtools/
+    && curl -LO https://github.com/phalcon/phalcon-devtools/archive/v${PHALCON_VERSION}.tar.gz \
+    && tar xzf v${PHALCON_VERSION}.tar.gz \
+    && mv phalcon-devtools-${PHALCON_VERSION} /usr/local/phalcon-devtools \
+    && ln -s /usr/local/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+    && rm -rf v${PHALCON_VERSION}.tar.gz
+
+########################################################################################################################
+# Tweaks ###############################################################################################################
+
+WORKDIR /code
+
+#RUN	mkdir -p "/home/$(id -u -n)/" && \
+#	touch "/home/$(id -u -n)/.viminfo" && \
+#	chmod -R "$(id -u -n):$(id -g -n) /home/$(id -u -n)"
+
+RUN apt-get autoclean \
+	&& apt-get autoremove -y \
+	&& apt-get clean -y \
+	&& rm -rf /var/lib/apt/lists/*

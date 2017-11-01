@@ -1,0 +1,7 @@
+Package: libpcre3
+Pin: release a=stretch
+Pin-Priority: 1000
+
+Package: *
+Pin: release a=stretch
+Pin-Priority: 1
