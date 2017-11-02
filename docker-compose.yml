@@ -53,16 +53,6 @@ services:
         source: ${SSH_FOLDER_PATH:-~/.ssh}
         target: /home/${USER_NAME:-root}/.ssh
         read_only: true
-      # Optional (1) -----------------------------------------------------
-      #- type: volume
-      #  source: /etc/group
-      #  target: /etc/group
-      #  read_only: true
-      #- type: volume
-      #  source: /etc/passwd
-      #  target: /etc/passwd
-      #  read_only: true
-      # ------------------------------------------------------------------
     depends_on:
       - db
   ########################################################################
