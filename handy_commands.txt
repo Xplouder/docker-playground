@@ -1,26 +1,61 @@
 #############################################
-## List of handy commands for daily tasks  ##
+##discouragedandy commands for daily tasks  ##
 #############################################
 
-docker-compose down -v
+# Delete all the containers and linked volumes
+    > docker-compose down -v
 
-docker-compose up
+# Start the containers
+    > docker-compose up
 
 # docker-compose exec <service_name> <executable>
-	- docker-compose exec php bash
+	> docker-compose exec php bash
 
-	# run bash as root user
-	- docker-compose exec -u root php bash
+# run bash as root user
+	> docker-compose exec -u root php bash
+
+# Start a docker-compose from a file
+    > docker-compose -f docs/docker-compose.yml up [optional -d to run detached] [optional service name (otherwise will run ALL)]
 
 # Tag a image
-	> docker tag 4a058ac939a6 xplouder/php-fpm-phalcon:1.0.0
+	> docker tag 4a058ac939a6 xplouder/docker-playground:1.2.3
 # Push a image
-	> docker push xplouder/php-fpm-phalcon
+	> docker push xplouder/docker-playground
+
+# List container IPs
+    > for s in `docker-compose ps -q`; do echo IP of `docker inspect -f "{{.Name}}" $s` is `docker inspect -f '{{range .NetworkSettings.Networks}} | {{.IPAddress}}{{end}}' $s`; done
 
 
-############################################
-# MYSQL ####################################
-# To read: https://savaslabs.com/2017/02/15/docker-mysql-performance.html
-#
-# > docker-compose exec db /bin/bash -c "mysql -u root -proot -e  \"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;\" "
-# ##########################################
+#########
+# MYSQL #
+#########
+Allow remote access on every table for root (for development purposes)
+    > docker-compose exec db /bin/bash -c "mysql -u root -proot -e  \"GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'root' WITH GRANT OPTION;\" "
+
+To read:
+    - https://savaslabs.com/2017/02/15/docker-mysql-performance.html
+
+
+##################################################
+# To create a bridged network with from the host #
+##################################################
+    > docker network create -d macvlan --subnet <SUBNET> --gateway <GATEWAY> -o parent=<HOST_NETWORK_NAME> -o macvlan_mode=bridge DOCKER_NETWORK_NAME
+
+    EXAMPLE:
+    > docker network create -d macvlan --subnet 192.168.1.0/24 --gateway 192.168.1.254 -o parent=eth0 -o macvlan_mode=bridge pub_net
+
+    HELPERS:
+    # Get the subnet
+        > ip -o route | grep eth0 | grep -v default | awk '{print $1}'
+    # Get the gateway
+        > ip -o route | grep default | awk '{print $3}'
+
+    NOTE:
+        - After you create the network, make sure to add it on your docker-compose file
+        - To guarantee that containers know each other (links) you should also create another network, similar to the default network that is created when you don't define any network
+
+    References:
+        - https://hicu.be/docker-networking-macvlan-bridge-mode-configuration
+        - https://docs.docker.com/engine/userguide/networking/get-started-macvlan/#macvlan-bridge-mode-example-usage
+        - http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/
+        - https://github.com/jpetazzo/pipework#connect-a-container-to-a-local-physical-interface

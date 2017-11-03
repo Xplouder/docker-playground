@@ -13,6 +13,8 @@ services:
         source: ./services_settings/mysql_configs/custom_configs.cnf
         target: /etc/mysql/conf.d/custom_configs.cnf
         read_only: true
+    networks:
+      stack_network:
   ########################################################################
   php:
     image: xplouder/docker-playground:alpine-latest
@@ -55,6 +57,8 @@ services:
         read_only: true
     depends_on:
       - db
+    networks:
+      stack_network:
   ########################################################################
   web:
     image: nginx:${NGINX_VERSION:-1.13.6}-alpine
@@ -71,11 +75,14 @@ services:
       - type: volume
         source: ./services_settings/nginx_conf.d
         target: /etc/nginx/conf.d
-    links:
-      - php
     depends_on:
       - php
       - db
+    networks:
+      stack_network:
+
+networks:
+  stack_network:
 
 # (1) Workaround for linux maping user id and user group id mapping,
 # comment this block if it not your case
