@@ -9,7 +9,7 @@ LABEL maintainer="Xplouder <jfasxx@hotmail.com>"
 #ADD ./debian-stretch/source.list /etc/apt/sources.list.d/source.list
 #ADD ./debian-stretch/source.preference /etc/apt/preferences.d/source
 
-RUN apt-get update && apt-get upgrade
+RUN apt-get update && apt-get -y upgrade
 
 ########################################################################################################################
 # PHP LIBS #############################################################################################################
