@@ -59,3 +59,13 @@ To read:
         - https://docs.docker.com/engine/userguide/networking/get-started-macvlan/#macvlan-bridge-mode-example-usage
         - http://blog.oddbit.com/2014/08/11/four-ways-to-connect-a-docker/
         - https://github.com/jpetazzo/pipework#connect-a-container-to-a-local-physical-interface
+
+##########
+# Tricks #
+##########
+
+# Multiple commands per container (use it inside docker-compose file's service)
+    exampleServiceName:
+        ...
+        command: bash -c "ifconfig && echo '1'"
+        ...
