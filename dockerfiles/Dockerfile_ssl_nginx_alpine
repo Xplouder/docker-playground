@@ -34,4 +34,4 @@ RUN touch /var/log/cron.log
 
 USER www-data
 
-CMD ["crond && nginx", "-g", "daemon off;"]
+CMD ["sh", "-c", "crond && nginx -g 'daemon off;' "]
