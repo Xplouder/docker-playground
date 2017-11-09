@@ -1,0 +1,37 @@
+ARG NGINX_VERSION=mainline
+FROM nginx:${NGINX_VERSION}-alpine
+
+LABEL maintainer="Xplouder <jfasxx@hotmail.com>"
+
+# Non-Root #############################################################################################################
+
+RUN touch /var/run/nginx.pid \
+    && addgroup -S www-data \
+    && adduser -D -S -G www-data www-data \
+    && chown -R www-data:www-data /var/run/nginx.pid \
+    && chown -R www-data:www-data /var/cache/nginx
+
+########################################################################################################################
+# SSL ##################################################################################################################
+
+ADD ./certs/default.cert /var/nginx/certs/default.cert
+ADD ./certs/default.key /var/nginx/certs/default.key
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache ca-certificates certbot \
+    && update-ca-certificates \
+
+# Disabled until it is tested with a correct domain
+#RUN certbot certonly --standalone --email example@example.com -d example.com
+
+# https://reprage.com/post/SSL-with-letsencrypt-nginx-and-docker
+RUN echo '1 6,18 * * * certbot certonly --standalone --email admin@example.com -d example.com' >> /etc/crontabs/root
+RUN touch /var/log/cron.log
+
+########################################################################################################################
+# Global ###############################################################################################################
+
+USER www-data
+
+CMD ["crond && nginx", "-g", "daemon off;"]

@@ -61,10 +61,16 @@ services:
       stack_network:
   ########################################################################
   web:
-    image: nginx:${NGINX_VERSION:-1.13.6}-alpine
+    image: xplouder/docker-playground:nginx-alpine-latest
+    build:
+      context: ./dockerfiles
+      dockerfile: Dockerfile_ssl_nginx_alpine
+      args:
+        - NGINX_VERSION=${NGINX_VERSION:-mainline}
     ports:
-      - "8080:80"
-      - "8081:81"
+      - "80:8000"
+      - "81:8100"
+      - "443:4430"
     volumes:
       - type: volume
         source: ./project/code
@@ -84,5 +90,5 @@ services:
 networks:
   stack_network:
 
-# (1) Workaround for linux maping user id and user group id mapping,
+# (1) Workaround for linux mapping user id and user group id mapping,
 # comment this block if it not your case
