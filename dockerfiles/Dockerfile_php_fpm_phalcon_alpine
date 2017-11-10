@@ -34,7 +34,7 @@ RUN set -ex \
 	&& apk add --no-cache icu-libs \
 	&& apk add --no-cache --virtual intl-deps icu-dev \
 	&& docker-php-ext-install intl \
-	&& apk del intl-deps
+	&& apk del --purge intl-deps
 
 
 # Xdebug extension
@@ -45,20 +45,23 @@ RUN set -ex \
 	&& pecl install xdebug \
 	&& docker-php-ext-enable xdebug \
 	&& docker-php-source delete \
-	&& apk del xdebug-deps \
-	# TODO: confirm these settings
-	&& echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-	&& echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-	&& echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+	&& apk del --purge xdebug-deps
+
+# YAML extension
+RUN set -ex \
+	&& apk add --no-cache --virtual yaml-deps g++ make autoconf yaml-dev \
+	&& pecl channel-update pecl.php.net \
+	&& pecl install yaml-2.0.0 \
+	&& docker-php-ext-enable yaml \
+	&& apk del --purge yaml-deps
 
 # Other extensions
-
 RUN set -ex \
 	# Necessary libs
 	&& apk add --no-cache libmcrypt \
-	&& apk add --no-cache --virtual other-deps libmcrypt-dev libxml2-dev libpng-dev libjpeg-turbo-dev\
+	&& apk add --no-cache --virtual other-deps libmcrypt-dev libxml2-dev libpng-dev libjpeg-turbo-dev \
 	&& docker-php-ext-install mcrypt pdo_mysql soap zip mbstring iconv mysqli exif bcmath opcache pdo gd \
-	&& apk del other-deps
+	&& apk del --purge other-deps
 
 # ######################################################################################################################
 # # CLI TOOLS ##########################################################################################################
@@ -69,7 +72,7 @@ RUN apk add --no-cache vim nano git tree wget bash curl
 
 RUN apk add --no-cache openssh-client libmcrypt net-tools mysql-client
 
-# Replace nodejs by nodejs-current when using a image based on Alpine 3.6  
+# Replace nodejs by nodejs-current when using a image based on Alpine 3.6
 RUN apk add --no-cache nodejs \
 	&& curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
@@ -95,7 +98,7 @@ RUN set -xe \
 	&& mv phalcon-devtools-${PHALCON_VERSION} /usr/local/phalcon-devtools \
 	&& ln -s /usr/local/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
 	&& rm -rf v${PHALCON_VERSION}.tar.gz \
-	&& apk del phalcon-deps
+	&& apk del --purge phalcon-deps
 
 # ######################################################################################################################
 # # Tweaks #############################################################################################################
