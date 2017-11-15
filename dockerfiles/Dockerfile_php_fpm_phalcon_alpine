@@ -47,13 +47,17 @@ RUN set -ex \
 	&& docker-php-source delete \
 	&& apk del --purge xdebug-deps
 
-# YAML extension
-RUN set -ex \
-	&& apk add --no-cache --virtual yaml-deps g++ make autoconf yaml-dev \
-	&& pecl channel-update pecl.php.net \
-	&& pecl install yaml-2.0.0 \
-	&& docker-php-ext-enable yaml \
-	&& apk del --purge yaml-deps
+
+## YAML extension
+ENV PHPIZE_DEPS autoconf dpkg-dev dpkg file g++ gcc libc-dev make pcre-dev pkgconf re2c
+ENV PHP_INI_DIR /usr/local/etc/php
+
+RUN set -xe && apk add --no-cache --virtual yaml-deps $PHPIZE_DEPS
+RUN set -xe && apk add --no-cache yaml-dev
+RUN pecl install yaml-2.0.2
+RUN echo "extension=yaml.so" >> $PHP_INI_DIR/conf.d/01_yaml.ini
+RUN apk del --purge yaml-deps
+
 
 # Other extensions
 RUN set -ex \
