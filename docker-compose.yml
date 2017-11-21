@@ -32,6 +32,10 @@ services:
     # Optional (1) -------------------------
     user: ${USER_ID:-0}:${GROUP_USER_ID:-0}
     # --------------------------------------
+    # Optional (2) -------------------------
+    environment:
+      - PHP_IDE_CONFIG=serverName=${IDE_SERVER_NAME}
+    # --------------------------------------
     volumes:
       # [Project]
       - type: volume
@@ -90,5 +94,5 @@ services:
 networks:
   stack_network:
 
-# (1) Workaround for linux mapping user id and user group id mapping,
-# comment this block if it not your case
+# (1) Workaround for linux mapping user id and user group id mapping, ignore this block if it is not your case
+# (2) Config required to debug with Xdebug in CLI PHP scripts, ignore this block if you do not need it
