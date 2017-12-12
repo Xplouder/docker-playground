@@ -22,7 +22,7 @@ services:
       context: ./dockerfiles
       dockerfile: Dockerfile_php_fpm_phalcon_alpine
       args:
-        - PHP_VERSION=${PHP_VERSION:-7.1.10}
+        - PHP_VERSION=${PHP_VERSION:-7.2.0}
         - PHALCON_VERSION=${PHALCON_VERSION:-3.2.4}
         # Optional (1) ---------------------
         - USER_ID=${USER_ID:-0}
