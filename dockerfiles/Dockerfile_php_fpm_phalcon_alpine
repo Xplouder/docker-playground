@@ -65,7 +65,7 @@ RUN set -ex \
 	# Necessary libs
 	&& apk add --no-cache libmcrypt \
 	&& apk add --no-cache --virtual other-deps libmcrypt-dev libxml2-dev libpng-dev libjpeg-turbo-dev \
-	&& docker-php-ext-install mcrypt pdo_mysql soap zip mbstring iconv mysqli exif bcmath opcache pdo gd \
+	&& docker-php-ext-install pdo_mysql soap zip mbstring iconv mysqli exif bcmath opcache pdo gd \
 	&& apk del --purge other-deps
 
 # ######################################################################################################################
