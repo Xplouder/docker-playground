@@ -2,8 +2,8 @@
 # - http://blog.zot24.com/tips-tricks-with-alpine-docker/
 # - http://www.sandtable.com/reduce-docker-image-sizes-using-alpine/
 
-# Based on Alpine 3.4
-ARG PHP_VERSION=7.1.10
+# Based on Alpine 3.6
+ARG PHP_VERSION=7.2.0
 FROM php:${PHP_VERSION}-fpm-alpine
 
 ########################################################################################################################
