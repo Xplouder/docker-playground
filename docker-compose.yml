@@ -9,7 +9,7 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     volumes:
-      - type: volume
+      - type: bind
         source: ./services_settings/mysql_configs/custom_configs.cnf
         target: /etc/mysql/conf.d/custom_configs.cnf
         read_only: true
@@ -38,24 +38,33 @@ services:
     # --------------------------------------
     volumes:
       # [Project]
-      - type: volume
+      - type: bind
         source: ./project/code
         target: /code
-      - type: volume
+      - type: bind
         source: ./project/resources
         target: /resources
+      - type: bind
+        source: ./project/logs/execution
+        target: /logs/execution
+      - type: bind
+        source: ./project/logs/database
+        target: /logs/database
+      - type: bind
+        source: ./project/logs/other
+        target: /logs/other
         # [PHP-FPM] Log Configs
-      - type: volume
+      - type: bind
         source: ./services_settings/php_configs/php-fpm_log_config.conf
         target: /usr/local/etc/php-fpm.d/zz-log.conf
         read_only: true
         # [PHP] Extra configs
-      - type: volume
+      - type: bind
         source: ./services_settings/php_configs/zz_extra_configs.ini
         target: /usr/local/etc/php/conf.d/zz_extra_configs.ini
         read_only: true
       # [SSH]
-      - type: volume
+      - type: bind
         source: ${SSH_FOLDER_PATH:-~/.ssh}
         target: /home/${USER_NAME:-root}/.ssh
         read_only: true
@@ -76,13 +85,13 @@ services:
       - "81:8100"
       - "443:4430"
     volumes:
-      - type: volume
+      - type: bind
         source: ./project/code
         target: /code
-      - type: volume
+      - type: bind
         source: ./project/resources
         target: /resources
-      - type: volume
+      - type: bind
         source: ./services_settings/nginx_conf.d
         target: /etc/nginx/conf.d
     depends_on:
