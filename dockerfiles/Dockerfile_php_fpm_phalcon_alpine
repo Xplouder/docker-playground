@@ -70,7 +70,7 @@ RUN set -ex \
 
 # ######################################################################################################################
 # # CLI TOOLS ##########################################################################################################
-RUN apk add --no-cache vim nano git tree wget bash curl tar
+RUN apk add --no-cache vim nano git tree wget bash curl
 
 # ######################################################################################################################
 # # EXTRA LIBS #########################################################################################################
@@ -98,11 +98,11 @@ RUN set -xe \
 	&& cd ../.. \
 	&& rm -rf v${PHALCON_VERSION}.tar.gz cphalcon-${PHALCON_VERSION} \
 	# Install Phalcon Devtools, see https://github.com/phalcon/phalcon-devtools/
-	&& curl -LO https://github.com/phalcon/phalcon-devtools/archive/v${PHALCON_VERSION}.tar.gz \
-	&& tar xzf v${PHALCON_VERSION}.tar.gz \
-	&& mv phalcon-devtools-${PHALCON_VERSION} /usr/local/phalcon-devtools \
-	&& ln -s /usr/local/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
-	&& rm -rf v${PHALCON_VERSION}.tar.gz \
+	#&& curl -LO https://github.com/phalcon/phalcon-devtools/archive/v${PHALCON_VERSION}.tar.gz \
+	#&& tar xzf v${PHALCON_VERSION}.tar.gz \
+	#&& mv phalcon-devtools-${PHALCON_VERSION} /usr/local/phalcon-devtools \
+	#&& ln -s /usr/local/phalcon-devtools/phalcon.php /usr/local/bin/phalcon \
+	#&& rm -rf v${PHALCON_VERSION}.tar.gz \
 	&& apk del --purge phalcon-deps
 
 # ######################################################################################################################
