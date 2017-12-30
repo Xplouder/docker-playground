@@ -23,7 +23,7 @@ services:
       dockerfile: Dockerfile_php_fpm_phalcon_alpine
       args:
         - PHP_VERSION=${PHP_VERSION:-7.2.0}
-        - PHALCON_VERSION=${PHALCON_VERSION:-3.2.4}
+        - PHALCON_VERSION=${PHALCON_VERSION:-3.3.0}
         # Optional (1) ---------------------
         - USER_ID=${USER_ID:-0}
         - GROUP_USER_ID=${GROUP_USER_ID:-0}

@@ -83,7 +83,7 @@ RUN apk add --no-cache nodejs \
 
 # ######################################################################################################################
 # # PHALCON ############################################################################################################
-ARG PHALCON_VERSION=3.2.4
+ARG PHALCON_VERSION=3.3.0
 
 # https://hub.docker.com/r/npulidom/alpine-phalcon/~/dockerfile/
 # Compile Phalcon
