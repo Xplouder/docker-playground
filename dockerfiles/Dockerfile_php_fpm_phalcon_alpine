@@ -3,7 +3,7 @@
 # - http://www.sandtable.com/reduce-docker-image-sizes-using-alpine/
 
 # Based on Alpine 3.6
-ARG PHP_VERSION=7.2.1
+ARG PHP_VERSION=7.2.2
 FROM php:${PHP_VERSION}-fpm-alpine
 
 ########################################################################################################################
@@ -42,7 +42,7 @@ RUN set -ex \
 RUN set -ex \
 	&& apk add --no-cache --virtual xdebug-deps autoconf freetype-dev g++ make gettext-dev \
 	&& docker-php-source extract \
-	&& pecl install xdebug-2.6.0beta1 \
+	&& pecl install xdebug-2.6.0 \
 	&& docker-php-ext-enable xdebug \
 	&& docker-php-source delete \
 	&& apk del --purge xdebug-deps
