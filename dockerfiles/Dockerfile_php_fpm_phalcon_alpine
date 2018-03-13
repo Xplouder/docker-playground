@@ -3,7 +3,7 @@
 # - http://www.sandtable.com/reduce-docker-image-sizes-using-alpine/
 
 # Based on Alpine 3.6
-ARG PHP_VERSION=7.2.1
+ARG PHP_VERSION=7.2.3
 FROM php:${PHP_VERSION}-fpm-alpine
 
 ########################################################################################################################
@@ -83,7 +83,7 @@ RUN apk add --no-cache nodejs \
 
 # ######################################################################################################################
 # # PHALCON ############################################################################################################
-ARG PHALCON_VERSION=3.3.1
+ARG PHALCON_VERSION=3.3.2
 
 # https://hub.docker.com/r/npulidom/alpine-phalcon/~/dockerfile/
 # Compile Phalcon

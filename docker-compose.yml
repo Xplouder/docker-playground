@@ -3,7 +3,7 @@ version: "3.3"
 services:
   ########################################################################
   db:
-    image: mysql:${MYSQL_VERSION:-5.7.20}
+    image: mysql:${MYSQL_VERSION:-5.7.21}
     environment:
       - MYSQL_USER=${MYSQL_USER}
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
@@ -22,8 +22,8 @@ services:
       context: ./dockerfiles
       dockerfile: Dockerfile_php_fpm_phalcon_alpine
       args:
-        - PHP_VERSION=${PHP_VERSION:-7.2.0}
-        - PHALCON_VERSION=${PHALCON_VERSION:-3.3.0}
+        - PHP_VERSION=${PHP_VERSION:-7.2.3}
+        - PHALCON_VERSION=${PHALCON_VERSION:-3.3.2}
         # Optional (1) ---------------------
         - USER_ID=${USER_ID:-0}
         - GROUP_USER_ID=${GROUP_USER_ID:-0}
@@ -58,7 +58,7 @@ services:
         source: ./services_settings/php_configs/php-fpm_log_config.conf
         target: /usr/local/etc/php-fpm.d/zz-log.conf
         read_only: true
-        # [PHP] Extra configs
+      # [PHP] Extra configs
       - type: bind
         source: ./services_settings/php_configs/zz_extra_configs.ini
         target: /usr/local/etc/php/conf.d/zz_extra_configs.ini
@@ -91,6 +91,9 @@ services:
       - type: bind
         source: ./project/resources
         target: /resources
+      - type: bind
+        source: ./project/logs/other
+        target: /logs/other
       - type: bind
         source: ./services_settings/nginx_conf.d
         target: /etc/nginx/conf.d
