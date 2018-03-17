@@ -12,3 +12,4 @@ innodb_flush_log_at_trx_commit=0
 # Cool reads:
 # - https://themech.net/2011/10/struggling-with-mysql-performance-problems-under-linux/
 # - https://serverfault.com/a/521989
+# - http://www.khankennels.com/presentations/pdf/performance_tuning.pdf
